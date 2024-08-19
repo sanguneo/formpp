@@ -7,6 +7,8 @@ import hashlib
 import comtypes.client
 from comtypes import CoInitialize, CoUninitialize
 from datetime import datetime, timedelta
+from fpdf import FPDF
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -16,6 +18,37 @@ ORIGIN_DIR = os.path.abspath('origin')
 CONVERTED_DIR = os.path.abspath('converted')
 os.makedirs(ORIGIN_DIR, exist_ok=True)
 os.makedirs(CONVERTED_DIR, exist_ok=True)
+
+def add_print_styles_to_html(input_file_path):
+    """HTML 파일을 열어 <head>에 프린트 스타일을 추가합니다."""
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        html_content = file.read()
+
+    # 추가할 스타일
+    style_content = """
+<style>
+@media print {
+    @page { margin: 0; }
+    body { margin: 1.6cm; }
+}
+</style>
+"""
+
+    # <head> 바로 뒤에 추가할 스타일을 삽입
+    head_end_index = html_content.find('</head>')
+    if head_end_index != -1:
+        modified_html_content = html_content[:head_end_index] + style_content + html_content[head_end_index:]
+    else:
+        head_start_index = html_content.find('<head>')
+        if head_start_index != -1:
+            modified_html_content = ( html_content[:head_start_index + len('<head>')] + style_content + html_content[head_start_index + len('<head>'):])
+        else:
+            modified_html_content = (html_content + "<head>" + style_content + "</head>")
+
+    with open(input_file_path, 'w', encoding='utf-8') as file:
+        file.write(modified_html_content)
+
+    return input_file_path
 
 def delete_old_files(directory, max_age_hours=6):
     """지정된 디렉토리에서 max_age_hours 시간보다 오래된 파일들을 삭제합니다."""
@@ -98,6 +131,36 @@ def convert_hwp_to_pdf(app, input_file, output_file):
     finally:
         app.Clear(1)  # 문서 닫기 및 메모리 해제
 
+def convert_html_to_pdf(input_file, output_file):
+    """HTML 파일을 PDF로 변환합니다."""
+    add_print_styles_to_html(input_file)
+
+    chrome_path = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'  # Chrome의 경로를 입력하세요
+    command = [
+        chrome_path,
+        '--headless',
+        '--print-to-pdf=' + output_file,
+        'file://' + os.path.abspath(input_file)
+    ]
+    try:
+        subprocess.run(command, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error during HTML to PDF conversion: {e}")
+        raise
+
+def convert_txt_to_pdf(input_file, output_file):
+    """텍스트 파일을 PDF로 변환합니다."""
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.set_font("Arial", size=12)
+
+    with open(input_file, 'r', encoding='utf-8') as file:
+        for line in file:
+            pdf.multi_cell(0, 10, line)
+
+    pdf.output(output_file)
+
 def delete_file_after_delay(file_path, delay=1):
     """지정된 파일을 일정 시간 후에 삭제합니다."""
     def delete():
@@ -131,21 +194,32 @@ def convert_file():
     conversion_mapping = {
         '.doc': ('Word.Application', convert_word_to_pdf, lambda app: app.Quit()),
         '.docx': ('Word.Application', convert_word_to_pdf, lambda app: app.Quit()),
+        '.odt': ('Word.Application', convert_word_to_pdf, lambda app: app.Quit()),
         '.xls': ('Excel.Application', convert_excel_to_pdf, lambda app: app.Quit()),
         '.xlsx': ('Excel.Application', convert_excel_to_pdf, lambda app: app.Quit()),
+        '.csv': ('Excel.Application', convert_excel_to_pdf, lambda app: app.Quit()),
         '.ppt': ('PowerPoint.Application', convert_ppt_to_pdf, lambda app: app.Quit()),
         '.pptx': ('PowerPoint.Application', convert_ppt_to_pdf, lambda app: app.Quit()),
         '.hwp': ('HWPFrame.HwpObject', convert_hwp_to_pdf, lambda app: app.Quit()),
-        '.hml': ('HWPFrame.HwpObject', convert_hwp_to_pdf, lambda app: app.Quit())
+        '.hwpx': ('HWPFrame.HwpObject', convert_hwp_to_pdf, lambda app: app.Quit()),
+        '.hml': ('HWPFrame.HwpObject', convert_hwp_to_pdf, lambda app: app.Quit()),
+        '.html': (None, convert_html_to_pdf, None),
+        '.htm': (None, convert_html_to_pdf, None),
+        '.txt': (None, convert_txt_to_pdf, None)  # 추가된 부분
     }
 
     if ext not in conversion_mapping:
         return jsonify({"error": "Unsupported file extension"}), 400
 
     try:
-        initialize_com()
-        app_name, conversion_func, close_func = conversion_mapping[ext]
-        convert_to_pdf(origin_file_path, converted_file_path, app_name, conversion_func, close_func)
+        if ext in ['.html', '.htm']:
+            convert_html_to_pdf(origin_file_path, converted_file_path)
+        elif ext in ['.txt']:
+            convert_txt_to_pdf(origin_file_path, converted_file_path)
+        else:
+            initialize_com()
+            app_name, conversion_func, close_func = conversion_mapping[ext]
+            convert_to_pdf(origin_file_path, converted_file_path, app_name, conversion_func, close_func)
         return send_file(converted_file_path, as_attachment=True, download_name='converted.pdf', mimetype='application/pdf')
     except Exception as e:
         print(f"Error during file conversion: {e}")

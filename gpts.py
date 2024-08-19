@@ -82,6 +82,7 @@ def convert_ppt_to_pdf(app, input_file, output_file):
     presentation.Close()
 
 def convert_hwp_to_pdf(app, input_file, output_file):
+    """HWP 파일을 PDF로 변환합니다."""
     app.RegisterModule('FilePathCheckDLL', 'FilePathCheckerModuleExample')
     app.XHwpWindows.Item(0).Visible = False
     try:
@@ -91,9 +92,11 @@ def convert_hwp_to_pdf(app, input_file, output_file):
         app.HParameterSet.HFileOpenSave.Format = 'PDF'
         app.HParameterSet.HFileOpenSave.Quality = 100
         app.HAction.Execute("FileSaveAsPdf", app.HParameterSet.HFileOpenSave.HSet)
+    except Exception as e:
+        print(f"Error converting HWP to PDF: {e}")
+        raise
     finally:
-        app.Clear(1)
-        app.Quit()
+        app.Clear(1)  # 문서 닫기 및 메모리 해제
 
 def delete_file_after_delay(file_path, delay=1):
     """지정된 파일을 일정 시간 후에 삭제합니다."""

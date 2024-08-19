@@ -26,7 +26,7 @@ def delete_old_files(directory, max_age_hours=6):
     """지정된 디렉토리에서 max_age_hours 시간보다 오래된 파일들을 삭제합니다."""
     now = datetime.now()
     cutoff = now - timedelta(hours=max_age_hours)
-    
+
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if os.path.isfile(file_path):
@@ -141,7 +141,7 @@ def convert_file():
     file.save(origin_file_path)
 
     temp_input_path = os.path.abspath(origin_file_path)
-    
+
     # Calculate the hash of the uploaded file to check for existing conversion
     file_hash = calculate_file_hash(origin_file_path)
     converted_file_name = f"{file_hash}.pdf"
@@ -154,8 +154,8 @@ def convert_file():
     try:
         initialize_com()
         ext = os.path.splitext(temp_input_path)[1].lower()
-        
-        
+
+
         if ext in ['.doc', '.docx']:
             convert_word_to_pdf(temp_input_path, converted_file_path)
         elif ext in ['.xls', '.xlsx']:

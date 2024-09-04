@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, jsonify, render_template
+from flask import Flask, request, send_file, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import os
 import threading
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from fpdf import FPDF
 import subprocess
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 CORS(app)
 
 # 디렉토리 설정 및 초기화
@@ -33,7 +33,7 @@ def add_print_styles_to_html(input_file_path):
 }
 </style>
 """
-
+    
     # <head> 바로 뒤에 추가할 스타일을 삽입
     head_end_index = html_content.find('</head>')
     if head_end_index != -1:
@@ -147,7 +147,7 @@ def convert_html_to_pdf(input_file, output_file):
     except subprocess.CalledProcessError as e:
         print(f"Error during HTML to PDF conversion: {e}")
         raise
-
+        
 def convert_txt_to_pdf(input_file, output_file):
     """텍스트 파일을 PDF로 변환합니다."""
     pdf = FPDF()
@@ -227,11 +227,11 @@ def convert_file():
     finally:
         finalize_com()
 
-@app.route("/")
-def hello_world():
-    return render_template('index.html')
+@app.route('/')
+def serve_index():
+    return send_from_directory('templates', 'index.html')
 
 if __name__ == '__main__':
     cleaner_thread = threading.Thread(target=clean_directories, daemon=True)
     cleaner_thread.start()
-    app.run(host='0.0.0.0', port=65530)
+    app.run(host='0.0.0.0', port=65534)

@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>File Converter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.0.279/pdf.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.0.279/pdf.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs" type="module" async ></script>
     <style>
         #pdfViewer {
             position: relative;
@@ -54,248 +55,264 @@
     </style>
 </head>
 <body>
-<h1>문서 PDF 변환기</h1>
-<input type="file" id="fileInput" accept=".pdf, .doc, .docx, .odt, .txt, .xls, .xlsx, .csv, .ppt, .pptx, .hwp, .hwpx, .hml, .html, .htm">
-<button onclick="uploadFile()">변환</button> | <button onclick="clearViewer()">초기화</button><br />
-<button onclick="printPDF()">일반프린트</button> <button onclick="printPDF(true)">결제라인 추가 프린트</button> <span id="download"></span>
-<br /><br />
-<div id="pdfViewer" style="--zoom: 100;">
-    <div class="controller">
-        <svg name="zoomout" svg height="24px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M417.4,224H94.6C77.7,224,64,238.3,64,256c0,17.7,13.7,32,30.6,32h322.8c16.9,0,30.6-14.3,30.6-32  C448,238.3,434.3,224,417.4,224z"/></svg>
-        <input type="number" value="100" list="zoomlist" step="10" min="10" max="500"/>
-        <svg name="zoomin" svg height="24px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M417.4,224H288V94.6c0-16.9-14.3-30.6-32-30.6c-17.7,0-32,13.7-32,30.6V224H94.6C77.7,224,64,238.3,64,256  c0,17.7,13.7,32,30.6,32H224v129.4c0,16.9,14.3,30.6,32,30.6c17.7,0,32-13.7,32-30.6V288h129.4c16.9,0,30.6-14.3,30.6-32  C448,238.3,434.3,224,417.4,224z"/></svg>            <svg name="fit" baseProfile="tiny" height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M6.121,13c-0.553,0-1,0.448-1,1s0.447,1,1,1h1.465l-3.293,3.293c-0.391,0.391-0.391,1.023,0,1.414  C4.488,19.902,4.744,20,5,20s0.512-0.098,0.707-0.293l3.414-3.414V18c0,0.552,0.447,1,1,1S11,18.552,11,18v-5H6.121z"/><path d="M7,11c0.552,0,1-0.448,1-1V8h2c0.553,0,1-0.448,1-1s-0.447-1-1-1H6.001L6,10C6,10.552,6.447,11,7,11z"/><path d="M17,13c-0.553,0-1,0.448-1,1v2h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h4v-4C18,13.448,17.553,13,17,13z"/><path d="M18.293,4.293L15,7.586V6c0-0.552-0.447-1-1-1s-1,0.448-1,1v5h5c0.552,0,1-0.448,1-1s-0.447-1-1-1l-1.586,0l3.293-3.292  c0.391-0.391,0.391-1.023,0-1.414S18.684,3.902,18.293,4.293z"/></svg>
+    <h1>문서 PDF 변환기</h1>
+    <input type="file" id="fileInput" accept=".pdf, .doc, .docx, .odt, .txt, .xls, .xlsx, .csv, .ppt, .pptx, .hwp, .hwpx, .hml, .html, .htm">
+    <button onclick="uploadFile()">변환</button> | <button onclick="clearViewer()">초기화</button><br />
+    <button onclick="printPDF()">일반프린트</button> <button onclick="printPDF(true)">결제라인 추가 프린트</button> <span id="download"></span>
+    <br /><br />
+    <div id="pdfViewer" style="--zoom: 100;">
+        <div class="controller">
+            <svg name="zoomout" svg height="24px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M417.4,224H94.6C77.7,224,64,238.3,64,256c0,17.7,13.7,32,30.6,32h322.8c16.9,0,30.6-14.3,30.6-32  C448,238.3,434.3,224,417.4,224z"/></svg>
+            <input type="number" value="100" list="zoomlist" step="10" min="10" max="500"/>
+            <svg name="zoomin" svg height="24px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M417.4,224H288V94.6c0-16.9-14.3-30.6-32-30.6c-17.7,0-32,13.7-32,30.6V224H94.6C77.7,224,64,238.3,64,256  c0,17.7,13.7,32,30.6,32H224v129.4c0,16.9,14.3,30.6,32,30.6c17.7,0,32-13.7,32-30.6V288h129.4c16.9,0,30.6-14.3,30.6-32  C448,238.3,434.3,224,417.4,224z"/></svg>            <svg name="fit" baseProfile="tiny" height="24px" id="Layer_1" version="1.2" viewBox="0 0 24 24" width="24px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M6.121,13c-0.553,0-1,0.448-1,1s0.447,1,1,1h1.465l-3.293,3.293c-0.391,0.391-0.391,1.023,0,1.414  C4.488,19.902,4.744,20,5,20s0.512-0.098,0.707-0.293l3.414-3.414V18c0,0.552,0.447,1,1,1S11,18.552,11,18v-5H6.121z"/><path d="M7,11c0.552,0,1-0.448,1-1V8h2c0.553,0,1-0.448,1-1s-0.447-1-1-1H6.001L6,10C6,10.552,6.447,11,7,11z"/><path d="M17,13c-0.553,0-1,0.448-1,1v2h-2c-0.553,0-1,0.448-1,1s0.447,1,1,1h4v-4C18,13.448,17.553,13,17,13z"/><path d="M18.293,4.293L15,7.586V6c0-0.552-0.447-1-1-1s-1,0.448-1,1v5h5c0.552,0,1-0.448,1-1s-0.447-1-1-1l-1.586,0l3.293-3.292  c0.391-0.391,0.391-1.023,0-1.414S18.684,3.902,18.293,4.293z"/></svg>
+        </div>
     </div>
-</div>
 
-<script>
-    let blobUrl;
-    const pdfViewerElement = document.getElementById('pdfViewer');
-    const downloadContainer = document.getElementById('download');
+    <script>
+        setTimeout(() => {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.worker.min.mjs';
+        }, 1000);
+        let blobUrl;
+        const pdfViewerElement = document.getElementById('pdfViewer');
+        const downloadContainer = document.getElementById('download');
 
-    const fileInput = document.getElementById('fileInput');
-    const zoombox = pdfViewerElement.querySelector('input[type=number]');
-
-    pdfViewerElement.querySelector('svg[name=zoomout]').addEventListener('click', (e)=> {
-        const zoom = Number(zoombox.value);
-        const targetZoom = zoom - 10;
-        zoombox.value = targetZoom;
-        pdfViewerElement.setAttribute('style', `--zoom: ${targetZoom};`)
-    });
-
-    pdfViewerElement.querySelector('svg[name=zoomin]').addEventListener('click', (e)=> {
-        const zoom = Number(zoombox.value);
-        const targetZoom = zoom + 10;
-        zoombox.value = targetZoom;
-        pdfViewerElement.setAttribute('style', `--zoom: ${targetZoom};`)
-    });
-    pdfViewerElement.querySelector('svg[name=fit]').addEventListener('click', (e)=> {
-        const zoom = Number(pdfViewerElement.clientWidth / pdfViewerElement.getElementsByTagName('canvas')[0].clientWidth) * 100 - 25;
-        zoombox.value = zoom;
-        pdfViewerElement.setAttribute('style', `--zoom: ${zoom};`)
-    });
-
-    zoombox.addEventListener('change', (e)=> {
-        const zoom = e.target.value;
-        pdfViewerElement.setAttribute('style', `--zoom: ${zoom};`)
-    });
-
-
-    function clearViewer() {
-        if (blobUrl) {
-            URL.revokeObjectURL(blobUrl);
-        }
-        downloadContainer.innerHTML = '';
-        blobUrl = null;
-        fileInput.value = '';
-        zoombox.value = 100;
-        pdfViewerElement.setAttribute('style', `--zoom: 100;`);
-        const canvases = Array.from(pdfViewerElement.getElementsByTagName('canvas') || []);
-        for (let canvas of canvases) {
-            pdfViewerElement.removeChild(canvas);
-        }
-    }
-    /**
-     * @param {Blob | ArrayBuffer | Uint8Array | string} src
-     * @returns {Promise<void>}
-     */
-    async function loadPdf(src) {
-        const pdfFile = src instanceof Blob
-            ? new Uint8Array(await src.arrayBuffer())
-            : src instanceof ArrayBuffer
-                ? new Uint8Array(src)
-                : src;
-
-        const loadingTask = pdfjsLib.getDocument(pdfFile);
-
-        return loadingTask.promise.then(async pdf => {
-            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
-                await pdf.getPage(pageNum).then(page => {
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    canvas.classList.add('page');
-
-                    pdfViewerElement.appendChild(canvas);
-
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport,
-                    };
-                    page.render(renderContext);
-                });
-            }
-            return pdf.numPages;
-        });
-    }
-
-
-    async function uploadFile() {
         const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        if (!file) {
-            alert('Please select a file.');
-            return;
+        const zoombox = pdfViewerElement.querySelector('input[type=number]');
+
+        pdfViewerElement.querySelector('svg[name=zoomout]').addEventListener('click', (e)=> {
+            const zoom = Number(zoombox.value);
+            const targetZoom = zoom - 10;
+            zoombox.value = targetZoom;
+            pdfViewerElement.setAttribute('style', `--zoom: ${targetZoom};`)
+        });
+
+        pdfViewerElement.querySelector('svg[name=zoomin]').addEventListener('click', (e)=> {
+            const zoom = Number(zoombox.value);
+            const targetZoom = zoom + 10;
+            zoombox.value = targetZoom;
+            pdfViewerElement.setAttribute('style', `--zoom: ${targetZoom};`)
+        });
+        pdfViewerElement.querySelector('svg[name=fit]').addEventListener('click', (e)=> {
+            const zoom = Number(pdfViewerElement.clientWidth / pdfViewerElement.getElementsByTagName('canvas')[0].clientWidth) * 100 - 25;
+            zoombox.value = zoom;
+            pdfViewerElement.setAttribute('style', `--zoom: ${zoom};`)
+        });
+
+        zoombox.addEventListener('change', (e)=> {
+            const zoom = e.target.value;
+            pdfViewerElement.setAttribute('style', `--zoom: ${zoom};`)
+        });
+
+
+        function clearViewer() {
+            if (blobUrl) {
+                URL.revokeObjectURL(blobUrl);
+            }
+            downloadContainer.innerHTML = '';
+            blobUrl = null;
+            fileInput.value = '';
+            zoombox.value = 100;
+            pdfViewerElement.setAttribute('style', `--zoom: 100;`);
+            const canvases = Array.from(pdfViewerElement.getElementsByTagName('canvas') || []);
+            for (let canvas of canvases) {
+                pdfViewerElement.removeChild(canvas);
+            }
+            const iframes = Array.from(document.querySelectorAll('body > iframe'));
+            for (let iframe of iframes) {
+                document.body.removeChild(iframe);
+            }
         }
+/**
+         * @param {Blob | ArrayBuffer | Uint8Array | string} src
+         * @returns {Promise<void>}
+         */
+         async function loadPdf(src) {
+            
+            // The workerSrc property shall be specified.
+            
+            const pdfFile = src instanceof Blob
+                ? new Uint8Array(await src.arrayBuffer())
+                : src instanceof ArrayBuffer
+                    ? new Uint8Array(src)
+                    : src;
 
-        const formData = new FormData();
-        formData.append('file', file);
+            const loadingTask = pdfjsLib.getDocument(pdfFile);
+ 
+            return loadingTask.promise.then(async pdf => {
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    await pdf.getPage(pageNum).then(page => {
+                        const viewport = page.getViewport({ scale: 1.5 });
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
 
-        try {
-            let blob = file;
-            if(!file.type.endsWith('/pdf')){
-                const response = await fetch('http://ec2-54-180-119-101.ap-northeast-2.compute.amazonaws.com:65530/convert', {
-                    method: 'POST',
-                    body: formData,
-                });
+                        canvas.classList.add('page');
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                        pdfViewerElement.appendChild(canvas);
+
+                        const renderContext = {
+                            canvasContext: context,
+                            viewport: viewport,
+                        };
+                        page.render(renderContext);
+                    });
                 }
-                blob = await response.blob();
-            }
-            clearViewer();
-
-            const url = URL.createObjectURL(blob);
-
-            blobUrl = url;
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = file.name.split('.')[0] + '.pdf';
-            a.innerHTML = '<button>PDF 다운로드</button>';
-            downloadContainer.appendChild(a);
-
-            loadPdf(blob, pdfViewerElement);
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error during file conversion.\n' + JSON.stringify(error, null, 2));
+                return pdf.numPages;
+            });
         }
-    }
-    function printPDF(includeHeader = false) {
-        // 아이프레임 동적 생성
-        const iframe = document.createElement('iframe');
-        iframe.style.position = 'absolute';
-        iframe.style.width = '0';
-        iframe.style.height = '0';
-        iframe.style.border = 'none';
-        document.body.appendChild(iframe);
 
-        const printDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-        // 스타일 추가
-        const style = printDoc.createElement('style');
-        style.textContent = `
-                @page { margin: 0; }
-                body { margin: 0; padding: 0; }
-                .page { position: relative; }
-                .header { height: 200px; background-color: lightgray; text-align: center; line-height: 200px; }
-                .content { display: flex; justify-content: center; align-items: center; height: calc(100vh - 200px); }
-                .content img { display: block; max-width: 100%; max-height: 100%; }
-                .page img { page-break-after: always; }
-            `;
-        printDoc.head.appendChild(style);
-
-        const canvases = pdfViewerElement.querySelectorAll('canvas');
-        const imagePromises = [];
-
-        canvases.forEach((canvas, index) => {
-            const pageDiv = printDoc.createElement('div');
-            pageDiv.className = 'page';
-
-            if (includeHeader && index === 0) {
-                const approvalInfoStyle = printDoc.createElement('style');
-                approvalInfoStyle.textContent = `
-                        #approvalInfo { display: flex; gap: 50px; padding: 15px; justify-content: space-between; }
-                        #approvalInfo table { box-sizing: border-box; border-collapse: collapse; }
-                        #approvalInfo table tr td { box-sizing: border-box; border: 1px solid black; text-align: center; }
-                        #approvalInfo #generalInfo { width: 30%; }
-                        #approvalInfo #generalInfo tr td:first-of-type { font-weight: bold; text-align: left; background-color: #e9e9e9; }
-                        #approvalInfo #lineInfo { max-width: calc(70% - 50px); }
-                        #approvalInfo #lineInfo tr:first-of-type td { height: 30px; font-weight: bold; background-color: #e9e9e9; }
-                        #approvalInfo #lineInfo tr:last-of-type td { height: 120px; }
-                        #approvalInfo #lineInfo tr td { width: 100px; vertical-align: middle; }
-                        #approvalInfo #lineInfo tr td[rowspan="2"] { width: 30px; height: unset; }
-                    `;
-                printDoc.head.appendChild(approvalInfoStyle);
-
-                const headerDiv = printDoc.createElement('div');
-                headerDiv.id = 'approvalInfo';
-                headerDiv.innerHTML = `
-                        <table id="generalInfo">
-                            <tbody>
-                                <tr><td>문서번호</td><td>검-2024-03</td></tr>
-                                <tr><td>기안일시</td><td>2024년 08월 13일</td></tr>
-                                <tr><td>보관기간</td><td>3년</td></tr>
-                                <tr><td>제목</td><td>제목 테스트</td></tr>
-                            </tbody>
-                        </table>
-                        <table id="lineInfo">
-                            <tbody>
-                                <tr><td rowspan="2">결<br/>제<br/>선</td><td>대리</td><td>과장</td><td>부장</td><td>사장</td></tr>
-                                <tr><td>홍길동</td><td>고길동</td><td>자기장</td><td>공장장</td></tr>
-                            </tbody>
-                        </table>
-                    `;
-                pageDiv.appendChild(headerDiv);
-
-                const contentDiv = printDoc.createElement('div');
-                contentDiv.className = 'content';
-
-                const img = printDoc.createElement('img');
-                const scaleFactor = (canvas.height - 200) / canvas.height;
-                img.src = canvas.toDataURL('image/jpeg', 100);
-                img.style.height = `${canvas.height * scaleFactor}px`;
-                img.style.width = `${canvas.width * scaleFactor}px`;
-
-                contentDiv.appendChild(img);
-                pageDiv.appendChild(contentDiv);
-
-                imagePromises.push(new Promise((resolve) => {
-                    img.onload = resolve;
-                }));
-
-            } else {
-                const img = printDoc.createElement('img');
-                img.src = canvas.toDataURL('image/jpeg', 100);
-                pageDiv.appendChild(img);
-
-                imagePromises.push(new Promise((resolve) => {
-                    img.onload = resolve;
-                }));
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file.');
+                return;
             }
 
-            printDoc.body.appendChild(pageDiv);
-        });
+            const formData = new FormData();
+            formData.append('file', file);
 
-        // 모든 이미지 로드가 완료되면 프린트 실행
-        Promise.all(imagePromises).then(() => {
-            iframe.contentWindow.focus();
-            iframe.contentWindow.print();
-            document.body.removeChild(iframe);
-        });
-    }
-</script>
+            try {
+                let blob = file;
+                if(!file.type.endsWith('/pdf')){
+                    const response = await fetch('http://ec2-54-180-119-101.ap-northeast-2.compute.amazonaws.com:65530/convert', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    blob = await response.blob();
+                }
+                clearViewer();
+
+                const url = URL.createObjectURL(blob);
+
+                blobUrl = url;
+                const a = document.createElement('a');
+                a.href = blobUrl;
+                a.download = file.name.split('.')[0] + '.pdf';
+                a.innerHTML = '<button>PDF 다운로드</button>';
+                downloadContainer.appendChild(a);
+
+                loadPdf(blob, pdfViewerElement);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error during file conversion.\n' + JSON.stringify(error, null, 2));
+            }
+        }
+        function printPDF(includeHeader = false) {
+            // 아이프레임 동적 생성
+            const iframe = document.createElement('iframe');
+            iframe.style.position = 'absolute';
+            iframe.style.width = '0';
+            iframe.style.height = '0';
+            iframe.style.border = 'none';
+
+            const imagePromises = [];
+
+            if (!includeHeader) {
+                iframe.src = blobUrl;
+                imagePromises.push(new Promise((resolve) => {
+                    iframe.onload = ()=>setTimeout(()=> {
+                        resolve();
+                    }, 1000);
+                }));
+                document.body.appendChild(iframe);
+            }
+            else {
+                document.body.appendChild(iframe);
+                const printDoc = iframe.contentDocument || iframe.contentWindow.document;
+                // 스타일 추가
+                const style = printDoc.createElement('style');
+                style.textContent = `
+                    @page { margin: 0; }
+                    body { margin: 0; padding: 0; }
+                    .page { position: relative; }
+                    .header { height: 200px; background-color: lightgray; text-align: center; line-height: 200px; }
+                    .content { display: flex; justify-content: center; align-items: center; height: calc(100vh - 200px); }
+                    .content img { display: block; max-width: 100%; max-height: 100%; }
+                    .page img { page-break-after: always; }
+                    
+                    #approvalInfo { display: flex; gap: 50px; padding: 15px; justify-content: space-between; }
+                    #approvalInfo table { box-sizing: border-box; border-collapse: collapse; }
+                    #approvalInfo table tr td { box-sizing: border-box; border: 1px solid black; text-align: center; }
+                    #approvalInfo #generalInfo { width: 30%; }
+                    #approvalInfo #generalInfo tr td:first-of-type { font-weight: bold; text-align: left; background-color: #e9e9e9; }
+                    #approvalInfo #lineInfo { max-width: calc(70% - 50px); }
+                    #approvalInfo #lineInfo tr:first-of-type td { height: 30px; font-weight: bold; background-color: #e9e9e9; }
+                    #approvalInfo #lineInfo tr:last-of-type td { height: 120px; }
+                    #approvalInfo #lineInfo tr td { width: 100px; vertical-align: middle; }
+                    #approvalInfo #lineInfo tr td[rowspan="2"] { width: 30px; height: unset; }
+                `;
+                printDoc.head.appendChild(style);
+
+                const canvases = pdfViewerElement.querySelectorAll('canvas');
+                
+
+                canvases.forEach((canvas, index) => {
+                    const pageDiv = printDoc.createElement('div');
+                    pageDiv.className = 'page';
+                    if (index === 0) {
+                        const headerDiv = printDoc.createElement('div');
+                        headerDiv.id = 'approvalInfo';
+                        headerDiv.innerHTML = `
+                            <table id="generalInfo">
+                                <tbody>
+                                    <tr><td>문서번호</td><td>검-2024-03</td></tr>
+                                    <tr><td>기안일시</td><td>2024년 08월 13일</td></tr>
+                                    <tr><td>보관기간</td><td>3년</td></tr>
+                                    <tr><td>제목</td><td>제목 테스트</td></tr>
+                                </tbody>
+                            </table>
+                            <table id="lineInfo">
+                                <tbody>
+                                    <tr><td rowspan="2">결<br/>제<br/>선</td><td>대리</td><td>과장</td><td>부장</td><td>사장</td></tr>
+                                    <tr><td>홍길동</td><td>고길동</td><td>자기장</td><td>공장장</td></tr>
+                                </tbody>
+                            </table>
+                        `;
+                        pageDiv.appendChild(headerDiv);
+
+                        const contentDiv = printDoc.createElement('div');
+                        contentDiv.className = 'content';
+
+                        const img = printDoc.createElement('img');
+                        const scaleFactor = (canvas.height - 200) / canvas.height;
+                        img.src = canvas.toDataURL('image/jpeg', 100);
+                        img.style.height = `${canvas.height * scaleFactor}px`;
+                        img.style.width = `${canvas.width * scaleFactor}px`;
+
+                        contentDiv.appendChild(img);
+                        pageDiv.appendChild(contentDiv);
+
+                        imagePromises.push(new Promise((resolve) => {
+                            img.onload = resolve;
+                        }));
+
+                    } else {
+                        const img = printDoc.createElement('img');
+                        img.src = canvas.toDataURL('image/jpeg', 100);
+                        pageDiv.appendChild(img);
+
+                        imagePromises.push(new Promise((resolve) => {
+                            img.onload = resolve;
+                        }));
+                    }
+
+                    printDoc.body.appendChild(pageDiv);
+                });
+            }
+
+            // 모든 이미지 로드가 완료되면 프린트 실행
+            Promise.all(imagePromises).then(() => {
+                iframe.contentWindow.focus();
+                iframe.contentWindow.print();
+            });
+        }
+    </script>
 </body>
 </html>
